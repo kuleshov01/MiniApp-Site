@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Единая карта сахалинца</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container" id="main-page">
+        <header>
+            <div class="logo">
+                <h1>Единая карта сахалинца</h1>
+            </div>
+        </header>
+
+        <main>
+            <div class="card-menu">
+                <div class="menu-item" onclick="showPage('get-card')">
+                    <div class="icon card-icon"></div>
+                    <h2>Получить карту</h2>
+                    <p>Оформите Единую карту сахалинца и получите скидки до 15% у партнеров, кешбэк и льготы</p>
+                </div>
+
+                <div class="menu-item" onclick="showPage('support')">
+                    <div class="icon support-icon"></div>
+                    <h2>Обратная связь</h2>
+                    <p>Задайте вопрос или сообщите о проблеме через службу поддержки</p>
+                </div>
+
+                <div class="menu-item" onclick="openCabinet()">
+                    <div class="icon cabinet-icon"></div>
+                    <h2>Личный кабинет</h2>
+                    <p>Узнайте статус карты, подключите новую или отключить существующую через ЕСИА</p>
+                </div>
+            </div>
+
+            <div class="info-block">
+                <h3>О карте</h3>
+                <p>Единая карта сахалинца - это полноценная банковская карта с бесплатным обслуживанием и технологией бесконтактной оплаты.</p>
+                <ul>
+                    <li>Выпуск и обслуживание бесплатно</li>
+                    <li>Скидки до 15% у партнеров</li>
+                    <li>Кешбэк до 20%</li>
+                    <li>Полис ОМС и СНИЛС в одной карте</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <div class="container hidden" id="get-card-page">
+        <header>
+            <button class="back-btn" onclick="showPage('main')"></button>
+            <h1>Получить карту</h1>
+        </header>
+
+        <main>
+            <div class="card-info">
+                <h2>Преимущества карты</h2>
+                <div class="benefits">
+                    <div class="benefit">
+                        <span class="value">0₽</span>
+                        <span class="label">Выпуск и обслуживание</span>
+                    </div>
+                    <div class="benefit">
+                        <span class="value">до 10%</span>
+                        <span class="label">Кешбэк от партнеров</span>
+                    </div>
+                    <div class="benefit">
+                        <span class="value">до 15%</span>
+                        <span class="label">Скидки у партнеров</span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="get-card-form" class="form">
+                <h3>Заявка на получение карты</h3>
+
+                <div class="form-group">
+                    <label>Выберите банк*</label>
+                    <select name="bank" required>
+                        <option value="">Выберите банк</option>
+                        <option value="gazprombank">Газпромбанк</option>
+                        <option value="atb">АТБ</option>
+                        <option value="iturup">Банк «ИТУРУП»</option>
+                        <option value="vtb">ВТБ</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Кто оформляет*</label>
+                    <select name="card_type" required>
+                        <option value="">Выберите</option>
+                        <option value="self">На себя</option>
+                        <option value="child">На ребёнка</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Мобильный телефон*</label>
+                    <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" required>
+                        <span>Я хочу использовать «Единую карту сахалинца» на транспорте</span>
+                    </label>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox">
+                        <span>Я хочу использовать «Единую карту сахалинца» в «Сахалинском долголетии»</span>
+                    </label>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox">
+                        <span>Я хочу использовать «Единую карту сахалинца» в Аква Парке (только для детей)</span>
+                    </label>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" required>
+                        <span>Я согласен на обработку персональных данных</span>
+                    </label>
+                    <p class="policy-text">В соответствии с ФЗ от 27.07.2006 No 152-ФЗ «О персональных данных»</p>
+                </div>
+
+                <button type="submit" class="submit-btn">Отправить заявку</button>
+            </form>
+        </main>
+    </div>
+
+    <div class="container hidden" id="support-page">
+        <header>
+            <button class="back-btn" onclick="showPage('main')"></button>
+            <h1>Обратная связь</h1>
+        </header>
+
+        <main>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <span class="icon phone-icon"></span>
+                    <div>
+                        <span class="label">Контактный центр</span>
+                        <span class="value">8 (800) 201-00-99</span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="support-form" class="form">
+                <h3>Напишите нам</h3>
+
+                <div class="form-group">
+                    <label>Ваше имя*</label>
+                    <input type="text" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Мобильный телефон*</label>
+                    <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email*</label>
+                    <input type="email" name="email" placeholder="example@mail.ru" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Тема обращения*</label>
+                    <select name="subject" required>
+                        <option value="">Выберите тему</option>
+                        <option value="status">Узнать статус карты</option>
+                        <option value="activation">Активация карты</option>
+                        <option value="loss">Утеря карты</option>
+                        <option value="technical">Технический вопрос</option>
+                        <option value="other">Другое</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Сообщение*</label>
+                    <textarea name="message" rows="4" placeholder="Опишите вашу проблему или вопрос" required></textarea>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" required>
+                        <span>Я согласен на обработку персональных данных</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn">Отправить сообщение</button>
+            </form>
+        </main>
+    </div>
+
+    <div class="modal hidden" id="success-modal">
+        <div class="modal-content">
+            <div class="success-icon"></div>
+            <h3 id="modal-title">Заявка отправлена</h3>
+            <p id="modal-message">Специалист свяжется с вами в ближайшее время</p>
+            <button class="modal-btn" onclick="closeModal()">Понятно</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
