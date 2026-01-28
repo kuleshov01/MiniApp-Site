@@ -98,12 +98,12 @@
 
                 <div class="form-group">
                     <label>Мобильный телефон*</label>
-                    <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
+                    <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" maxlength="18">
                 </div>
 
                 <div class="form-group checkbox-group">
                     <label class="checkbox-label">
-                        <input type="checkbox" required>
+                        <input type="checkbox">
                         <span>Я хочу использовать «Единую карту сахалинца» на транспорте</span>
                     </label>
                 </div>
@@ -162,7 +162,7 @@
 
                 <div class="form-group">
                     <label>Мобильный телефон*</label>
-                    <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
+                    <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" maxlength="18">
                 </div>
 
                 <div class="form-group">
@@ -196,6 +196,17 @@
 
                 <button type="submit" class="submit-btn">Отправить сообщение</button>
             </form>
+        </main>
+    </div>
+
+    <div class="container hidden" id="cabinet-page">
+        <header>
+            <button class="back-btn" onclick="showPage('main')"></button>
+            <h1>Личный кабинет</h1>
+        </header>
+
+        <main>
+            <iframe id="cabinet-iframe" src="" class="cabinet-frame"></iframe>
         </main>
     </div>
 
