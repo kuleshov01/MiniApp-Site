@@ -77,54 +77,71 @@
                 <h3>Заявка на получение карты</h3>
 
                 <div class="form-group">
-                    <label>Выберите банк*</label>
+                    <label>Банк-партнер*</label>
                     <select name="bank" required>
                         <option value="">Выберите банк</option>
-                        <option value="gazprombank">Газпромбанк</option>
-                        <option value="atb">АТБ</option>
-                        <option value="iturup">Банк «ИТУРУП»</option>
-                        <option value="vtb">ВТБ</option>
+                        <option value="«Газпромбанк»" data-id="gazp">Газпромбанк</option>
+                        <option value="«АТБ»" data-id="atb">АТБ</option>
+                        <option value="Банк «ИТУРУП»" data-id="iturup">Банк «ИТУРУП»</option>
+                        <option value="«ВТБ»" data-id="vtb">ВТБ</option>
                     </select>
+                    <input type="hidden" name="bank-id">
                 </div>
 
                 <div class="form-group">
-                    <label>Кто оформляет*</label>
-                    <select name="card_type" required>
+                    <label>На кого оформляется карта*</label>
+                    <select name="forwhom" required>
                         <option value="">Выберите</option>
-                        <option value="self">На себя</option>
-                        <option value="child">На ребёнка</option>
+                        <option value="На себя" data-id="self">На себя</option>
+                        <option value="На ребенка" data-id="child">На ребенка</option>
                     </select>
+                    <input type="hidden" name="forwhom-id">
+                </div>
+
+                <div class="form-group">
+                    <label>Фамилия*</label>
+                    <input type="text" name="lastname" required placeholder="Иванов">
+                </div>
+
+                <div class="form-group">
+                    <label>Имя*</label>
+                    <input type="text" name="name" required placeholder="Иван">
+                </div>
+
+                <div class="form-group">
+                    <label>Отчество</label>
+                    <input type="text" name="patron" placeholder="Иванович">
                 </div>
 
                 <div class="form-group">
                     <label>Мобильный телефон*</label>
-                    <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" maxlength="18">
+                    <input type="tel" name="mobPhone" placeholder="+7 (___) ___-__-__" maxlength="18">
                 </div>
 
                 <div class="form-group checkbox-group">
                     <label class="checkbox-label">
-                        <input type="checkbox">
+                        <input type="checkbox" name="rstkAgree">
                         <span>Я хочу использовать «Единую карту сахалинца» на транспорте</span>
                     </label>
                 </div>
 
                 <div class="form-group checkbox-group">
                     <label class="checkbox-label">
-                        <input type="checkbox">
+                        <input type="checkbox" name="dolgoletieAgree">
                         <span>Я хочу использовать «Единую карту сахалинца» в «Сахалинском долголетии»</span>
                     </label>
                 </div>
 
                 <div class="form-group checkbox-group">
                     <label class="checkbox-label">
-                        <input type="checkbox">
+                        <input type="checkbox" name="aquaAgree">
                         <span>Я хочу использовать «Единую карту сахалинца» в Аква Парке (только для детей)</span>
                     </label>
                 </div>
 
                 <div class="form-group checkbox-group">
                     <label class="checkbox-label">
-                        <input type="checkbox" required>
+                        <input type="checkbox" name="persAgree" required>
                         <span>Я согласен на обработку персональных данных</span>
                     </label>
                     <p class="policy-text">В соответствии с ФЗ от 27.07.2006 No 152-ФЗ «О персональных данных»</p>

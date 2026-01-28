@@ -55,6 +55,7 @@ function formatPhoneInput(input) {
     
     value = value.substring(0, 11);
     
+    // Форматируем как +7 (999) 999-99-99 (с дефисами как в оригинальной форме)
     let formatted = '';
     if (value.length > 0) {
         formatted = '+7';
@@ -88,7 +89,11 @@ function formatPhoneInput(input) {
 
 function formatPhone(phone) {
     if (!phone) return '';
-    return phone.replace(/\D/g, '').replace(/^7/, '').replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 ($1) $2-$3-$4');
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length === 11) {
+        return '+7 (' + digits.substring(1, 4) + ') ' + digits.substring(4, 7) + '-' + digits.substring(7, 9) + '-' + digits.substring(9, 11);
+    }
+    return phone;
 }
 
 function validatePhone(phone) {
@@ -120,12 +125,14 @@ function sendToGateway(data) {
 
 function validateGetCardForm(form) {
     const bank = form.querySelector('select[name="bank"]').value;
-    const cardType = form.querySelector('select[name="card_type"]').value;
-    const phone = form.querySelector('input[name="phone"]').value;
-    const consentCheckbox = form.querySelector('input[type="checkbox"][required]');
-    const consentChecked = consentCheckbox ? consentCheckbox.checked : false;
+    const forwhom = form.querySelector('select[name="forwhom"]').value;
+    const lastname = form.querySelector('input[name="lastname"]').value.trim();
+    const name = form.querySelector('input[name="name"]').value.trim();
+    const mobPhone = form.querySelector('input[name="mobPhone"]').value;
+    const persAgreeCheckbox = form.querySelector('input[name="persAgree"]');
+    const persAgreeChecked = persAgreeCheckbox ? persAgreeCheckbox.checked : false;
 
-    return bank && cardType && validatePhone(phone) && consentChecked;
+    return bank && forwhom && lastname && name && validatePhone(mobPhone) && persAgreeChecked;
 }
 
 function validateSupportForm(form) {
@@ -151,7 +158,33 @@ function validateSupportForm(form) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const phoneInputs = document.querySelectorAll('input[name="phone"]');
+    // Обработчик выбора банка
+    const bankSelect = document.querySelector('select[name="bank"]');
+    if (bankSelect) {
+        bankSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const bankId = selectedOption.getAttribute('data-id');
+            const bankIdInput = this.closest('form').querySelector('input[name="bank-id"]');
+            if (bankIdInput) {
+                bankIdInput.value = bankId || '';
+            }
+        });
+    }
+
+    // Обработчик выбора "На кого оформляется карта"
+    const forwhomSelect = document.querySelector('select[name="forwhom"]');
+    if (forwhomSelect) {
+        forwhomSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const forwhomId = selectedOption.getAttribute('data-id');
+            const forwhomIdInput = this.closest('form').querySelector('input[name="forwhom-id"]');
+            if (forwhomIdInput) {
+                forwhomIdInput.value = forwhomId || '';
+            }
+        });
+    }
+
+    const phoneInputs = document.querySelectorAll('input[name="phone"], input[name="mobPhone"]');
     
     phoneInputs.forEach(input => {
         input.addEventListener('input', function(e) {
@@ -196,32 +229,62 @@ document.addEventListener('DOMContentLoaded', function() {
             input.addEventListener('blur', updateSubmitBtn);
         });
         
-        getCardForm.addEventListener('submit', function(e) {
+        getCardForm.addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const formData = new FormData(this);
-            const checkboxes = this.querySelectorAll('input[type="checkbox"]');
             
             if (!validateGetCardForm(this)) {
                 alert('Пожалуйста, заполните все поля правильно');
                 return;
             }
-            
-            const data = {
-                type: 'get_card',
-                bank: formData.get('bank'),
-                card_type: formData.get('card_type'),
-                phone: formatPhone(formData.get('phone')),
-                transport: checkboxes[0] ? checkboxes[0].checked : false,
-                longevity: checkboxes[1] ? checkboxes[1].checked : false,
-                aquapark: checkboxes[2] ? checkboxes[2].checked : false,
-                consent: checkboxes[3] ? checkboxes[3].checked : false
-            };
 
-            sendToGateway(data);
-            showModal('Заявка отправлена', 'Специалист банка свяжется с вами в ближайшее время');
-            this.reset();
             submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправка...';
+            
+            try {
+                // Формируем данные формы в формате application/x-www-form-urlencoded
+                const params = new URLSearchParams();
+                
+                // Добавляем все поля
+                for (const [key, value] of formData.entries()) {
+                    if (value === 'on') {
+                        params.append(key, 'on');
+                    } else if (value) {
+                        params.append(key, value);
+                    }
+                }
+                
+                // Добавляем timestamp/номер заявки
+                params.append('n', Date.now().toString());
+                
+                // Отправляем запрос на правильный эндпоинт
+                const response = await fetch('https://eks.sakhalin.gov.ru/sendmail-bank-applying/', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': '*/*',
+                        'Accept-Language': 'ru-RU,ru;q=0.9,en-RU;q=0.8,en;q=0.7,en-US;q=0.6'
+                    },
+                    credentials: 'include',
+                    body: params
+                });
+                
+                // В режиме no-cors мы не можем получить ответ от сервера
+                // Считаем запрос успешным, если не возникло ошибки сети
+                showModal('Заявка отправлена', 'Специалист банка свяжется с вами в ближайшее время');
+                this.reset();
+                submitBtn.disabled = true;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ошибка соединения: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Отправить заявку';
+            }
         });
     }
 
