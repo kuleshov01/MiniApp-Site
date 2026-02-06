@@ -2,8 +2,7 @@ function showPage(page) {
     const pages = {
         'main': document.getElementById('main-page'),
         'get-card': document.getElementById('get-card-page'),
-        'support': document.getElementById('support-page'),
-        'cabinet': document.getElementById('cabinet-page')
+        'support': document.getElementById('support-page')
     };
 
     if (!pages[page]) {
@@ -14,14 +13,6 @@ function showPage(page) {
     Object.values(pages).forEach(p => p.classList.add('hidden'));
     pages[page].classList.remove('hidden');
     window.scrollTo(0, 0);
-}
-
-function openCabinet() {
-    const iframe = document.getElementById('cabinet-iframe');
-    if (iframe) {
-        iframe.src = 'https://eks.sakhalin.gov.ru/cabinet/login';
-    }
-    showPage('cabinet');
 }
 
 function showModal(title, message) {
