@@ -6,19 +6,22 @@
 
 1. **Получить карту** - Подача заявки на оформление Единой карты сахалинца
 2. **Обратная связь** - Обращение в службу поддержки
-3. **Личный кабинет** - Авторизация и управление картой (статус, подключение, отключение)
 
 ## Установка и запуск
 
 ### Локальный запуск
 
 ```bash
+# Запуск простого HTTP-сервера (Python)
+python3 -m http.server 3000
+
+# Или с использованием Node.js
 cd miniapp
 npm install
 npm start
 ```
 
-Приложение будет доступно по адресу http://localhost:8080
+Приложение будет доступно по адресу http://localhost:3000 (или http://localhost:8080 для Node.js)
 
 ### Размещение на сервере
 
@@ -30,31 +33,55 @@ npm start
 
 ### URL почтового шлюза
 
-В файле `script.js` измените значение переменной `gatewayUrl` на актуальный URL вашего почтового шлюза:
+Приложение использует следующие эндпоинты для отправки данных:
+
+- **Заявка на карту**: `https://eks.sakhalin.gov.ru/sendmail-bank-applying/`
+- **Обратная связь**: `https://eks.sakhalin.gov.ru/api/gateway`
+
+Для изменения URL-адресов отредактируйте файл `script.js`:
 
 ```javascript
+// Для заявки на карту (строка 253)
+const response = await fetch('https://your-server.com/sendmail-bank-applying/', {
+
+// Для обратной связи (строка 96)
 const gatewayUrl = 'https://your-server.com/api/gateway';
 ```
 
 ### Формат данных для почтового шлюза
 
-Приложение отправляет POST-запросы с JSON-данными:
+Приложение отправляет POST-запросы с данными:
 
 #### Заявка на карту
-```json
-{
-  "type": "get_card",
-  "bank": "gazprombank",
-  "card_type": "self",
-  "phone": "+7 (999) 123-45-67",
-  "transport": true,
-  "longevity": false,
-  "aquapark": false,
-  "consent": true
-}
-```
+
+**Эндпоинт**: `POST https://eks.sakhalin.gov.ru/sendmail-bank-applying/`
+
+**Content-Type**: `application/x-www-form-urlencoded; charset=UTF-8`
+
+**Режим**: `no-cors`
+
+**Поля формы**:
+- `bank` - название банка (например, "Газпромбанк")
+- `bank-id` - идентификатор банка (gazp, atb, iturup, vtb)
+- `forwhom` - на кого оформляется ("На себя" или "На ребенка")
+- `forwhom-id` - идентификатор (self или child)
+- `lastname` - фамилия
+- `name` - имя
+- `patron` - отчество (опционально)
+- `mobPhone` - мобильный телефон
+- `rstkAgree` - согласие на использование на транспорте (on/отсутствует)
+- `dolgoletieAgree` - согласие на использование в "Сахалинском долголетии" (on/отсутствует)
+- `aquaAgree` - согласие на использование в Аква Парке (on/отсутствует)
+- `persAgree` - согласие на обработку персональных данных (on/отсутствует)
+- `n` - timestamp заявки
 
 #### Обратная связь
+
+**Эндпоинт**: `POST https://eks.sakhalin.gov.ru/api/gateway`
+
+**Content-Type**: `application/json`
+
+**JSON-данные**:
 ```json
 {
   "type": "support",
@@ -67,34 +94,12 @@ const gatewayUrl = 'https://your-server.com/api/gateway';
 }
 ```
 
-#### Авторизация
-```json
-{
-  "type": "login",
-  "phone": "+7 (999) 123-45-67",
-  "password": "password123"
-}
-```
-
-#### Регистрация
-```json
-{
-  "type": "register",
-  "fullname": "Иванов Иван Иванович",
-  "phone": "+7 (999) 123-45-67",
-  "email": "ivan@mail.ru",
-  "snils": "123-456-789 12",
-  "password": "password123"
-}
-```
-
-#### Отключение карты
-```json
-{
-  "type": "disconnect",
-  "phone": "+7 (999) 123-45-67"
-}
-```
+**Возможные значения subject**:
+- `status` - Узнать статус карты
+- `activation` - Активация карты
+- `loss` - Утеря карты
+- `technical` - Технический вопрос
+- `other` - Другое
 
 ## Интеграция с мессенджером Макс
 
@@ -110,8 +115,14 @@ const gatewayUrl = 'https://your-server.com/api/gateway';
 - HTML5
 - CSS3 (мобильная адаптация)
 - Vanilla JavaScript
-- LocalStorage для хранения сессии
+- Fetch API для отправки данных на сервер
 
 ## Поддержка экранов
 
 Приложение оптимизировано для мобильных устройств с разрешением от 320px до 480px по ширине.
+
+## История изменений
+
+### 07.02.2026
+- Удалён блок с номером контактного центра в модуле обратной связи
+- Добавлена сноска о согласии на обработку персональных данных в форме обратной связи (в соответствии с ФЗ от 27.07.2006 No 152-ФЗ)
